@@ -152,9 +152,31 @@ shared_ptr<uint16_t> rpn_calc(command const cmd, uint16_t const value = 0) {
                 return make_shared<uint16_t>(result);
             }
 
-        default:
-            return nullptr;
+        case cmd_add:
+            if (stack.size() < 2) {
+                return nullptr;
+            } else {
+                uint16_t right = stack[stack.size() - 1];
+                uint16_t left = stack[stack.size() - 2];
+
+                uint32_t result = static_cast<uint32_t>(left) +
+                                  static_cast<uint32_t>(right);
+
+                if (result > 65535) {
+                    return nullptr;
+                }
+
+                stack.pop_back();
+                stack.pop_back();
+
+                uint16_t answer = static_cast<uint16_t>(result);
+                stack.push_back(answer);
+
+                return make_shared<uint16_t>(answer);
+            }
     }
+
+    return nullptr;
 }
 /*
  * *** STUDENTS SHOULD NOT NEED TO CHANGE THE CODE BELOW. IT IS A CUSTOM TEST HARNESS. ***
