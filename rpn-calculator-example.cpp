@@ -60,11 +60,96 @@ shared_ptr<uint16_t> rpn_calc(command const cmd, uint16_t const value = 0) {
             stack.clear();
             return nullptr;
 
+        case cmd_pop:
+            if (stack.empty()) {
+                return nullptr;
+            } else {
+                stack.pop_back();
+
+                if (stack.empty()) {
+                    return nullptr;
+                } else {
+                    return make_shared<uint16_t>(stack.back());
+                }
+            }
+
         case cmd_top:
             if (stack.empty()) {
                 return nullptr;
             } else {
                 return make_shared<uint16_t>(stack.back());
+            }
+
+        case cmd_left_shift:
+            if (stack.size() < 2) {
+                return nullptr;
+            } else {
+                uint16_t shift = stack.back();
+                stack.pop_back();
+
+                uint16_t number = stack.back();
+                stack.pop_back();
+
+                if (shift >= 16) {
+                    return nullptr;
+                }
+
+                uint16_t result = number << shift;
+                stack.push_back(result);
+
+                return make_shared<uint16_t>(result);
+            }
+
+        case cmd_right_shift:
+            if (stack.size() < 2) {
+                return nullptr;
+            } else {
+                uint16_t shift = stack.back();
+                stack.pop_back();
+
+                uint16_t number = stack.back();
+                stack.pop_back();
+
+                if (shift >= 16) {
+                    return nullptr;
+                }
+
+                uint16_t result = number >> shift;
+                stack.push_back(result);
+
+                return make_shared<uint16_t>(result);
+            }
+
+        case cmd_or:
+            if (stack.size() < 2) {
+                return nullptr;
+            } else {
+                uint16_t right = stack.back();
+                stack.pop_back();
+
+                uint16_t left = stack.back();
+                stack.pop_back();
+
+                uint16_t result = left | right;
+                stack.push_back(result);
+
+                return make_shared<uint16_t>(result);
+            }
+
+        case cmd_and:
+            if (stack.size() < 2) {
+                return nullptr;
+            } else {
+                uint16_t right = stack.back();
+                stack.pop_back();
+
+                uint16_t left = stack.back();
+                stack.pop_back();
+
+                uint16_t result = left & right;
+                stack.push_back(result);
+
+                return make_shared<uint16_t>(result);
             }
 
         default:
